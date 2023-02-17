@@ -6,8 +6,12 @@
         xmlns:l="clr-namespace:many_buttons"
         DataContext="{Binding MainWindowModel, Source={StaticResource Locator}}"
         Title="{Binding Title}"
-        Width="800" Height="450">
-    <DockPanel>
+        Padding="0"
+        Width="500"
+        Height="500" Background="#FFC7C2C2" Foreground="#FF437514" OpacityMask="#FFAB3030" BorderBrush="Black" 
+        
+        >
+    <DockPanel >
         <Menu DockPanel.Dock="Top" IsMainMenu="True">
             <Menu.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -22,7 +26,7 @@
             <StatusBarItem DockPanel.Dock="Right">
                 <ResizeGrip/>
             </StatusBarItem>
-            <StatusBarItem Content="{Binding Statfus}"/>
+            <StatusBarItem Content="{Binding Status}"/>
         </StatusBar>
         <Grid>
             <DockPanel>
@@ -32,8 +36,8 @@
                     <Frame Source="ButtonPage.xaml"/>
                     <Frame Source="ButtonPage.xaml"/>
                     <Label Content="main StackPanel window"/>
+                    <Border BorderBrush="Black" BorderThickness="1" Height="100"/>
                 </StackPanel>
-                
             </DockPanel>
         </Grid>
     </DockPanel>

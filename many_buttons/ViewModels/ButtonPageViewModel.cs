@@ -1,4 +1,5 @@
-﻿using many_buttons.Infrastructure.Commands;
+﻿using Accessibility;
+using many_buttons.Infrastructure.Commands;
 using many_buttons.Services.Interfaces;
 using many_buttons.ViewModels.Base;
 using many_buttons.ViewModels.Controls;
@@ -20,45 +21,55 @@ namespace many_buttons.ViewModels
             _UserDialog = UserDialog;
             _DataService = DataService;
             Status = "OK";
-            AddNewButtonCommand = new LambdaCommand(OnAddNewButtonCommandExecuted, CanAddNewButtonCommandExecute);
-            DeletedButtonsCommand = new LambdaCommand(OnDeletedButtonsCommandExecuted, CanDeletedButtonsCommandExecute);
-            RemoveButtonSelfCommand = new LambdaCommand(OnRemoveButtonSelfCommandExecuted, CanRemoveButtonSelfCommandExecute);
         }
 
+        #region RemoveButtonSelfCommand - Удаление кнопки из которой происходит вызов команды 
+        private LambdaCommand _RemoveButtonSelfCommand;
 
-        public ICommand RemoveButtonSelfCommand { get; }
+        public ICommand RemoveButtonSelfCommand => _RemoveButtonSelfCommand ??=
+            new LambdaCommand(OnRemoveButtonSelfCommandExecuted, CanRemoveButtonSelfCommandExecute);
 
         private bool CanRemoveButtonSelfCommandExecute(object p) => true;
         private void OnRemoveButtonSelfCommandExecuted(object p)
         {
-            if(p is MyButtonViewModel )
+            if (p is MyButtonViewModel)
             {
                 ButtonsList.Remove(p as MyButtonViewModel);
             }
         }
+        #endregion
 
-
-        public ICommand AddNewButtonCommand { get; }
-
-        int i = 0;
+        #region AddNewButtonCommand - добавление новой кнопки 
+        private LambdaCommand _AddNewButtonCommand;
+        public ICommand AddNewButtonCommand => _AddNewButtonCommand ??=
+            new LambdaCommand(OnAddNewButtonCommandExecuted, CanAddNewButtonCommandExecute);
         private bool CanAddNewButtonCommandExecute(object p) => true;
+        int i = 0; // счетчик
         private void OnAddNewButtonCommandExecuted(object p)
         {
             ButtonsList.Add(new MyButtonViewModel()
             {
                 DisplayText = $"Foo {i++}",
                 Command = RemoveButtonSelfCommand
-            });;
+            }); ;
             Status = i.ToString();
         }
+        #endregion
 
-        public ICommand DeletedButtonsCommand { get; }
-        private bool CanDeletedButtonsCommandExecute(object p) => ButtonsList.Count>0;
+        #region DeletedButtonsCommand  - Удаление последней кнопки 
+        private LambdaCommand _DeletedButtonsCommand;
+
+        public ICommand DeletedButtonsCommand => _DeletedButtonsCommand ??=
+            new LambdaCommand(OnDeletedButtonsCommandExecuted, CanDeletedButtonsCommandExecute);
+
+        private bool CanDeletedButtonsCommandExecute(object p) => ButtonsList.Count> 0;
+
         private void OnDeletedButtonsCommandExecuted(object p)
         {
-            var j = i - 1;
-            ButtonsList.Remove(ButtonsList[ButtonsList.Count -1]);
+
+            ButtonsList.Remove(ButtonsList[ButtonsList.Count - 1]);
         }
+        #endregion
 
 
         private ObservableCollection<MyButtonViewModel> _ButtonsList = new ObservableCollection<MyButtonViewModel>();
